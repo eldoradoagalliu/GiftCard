@@ -1,6 +1,6 @@
 package com.giftcard.config;
 
-import com.giftcard.enums.RoleEnum;
+import com.giftcard.enums.Role;
 import com.giftcard.util.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +29,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/v1/authenticate").permitAll()
-                                .requestMatchers("/api/v1/register", "/api/v1/users/**").hasAuthority(RoleEnum.ADMIN.getRole())
-                                .requestMatchers(HttpMethod.GET, "/api/v1/gift-cards").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/gift-cards").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/gift-cards").hasAuthority(RoleEnum.ADMIN.getRole())
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/gift-cards").hasAuthority(RoleEnum.ADMIN.getRole()))
+                                .requestMatchers(HttpMethod.GET, "/api/v1/gift-card").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/gift-card").permitAll()
+                                .requestMatchers("/api/v1/register", "/api/v1/user", "/api/v1/gift-card").hasAuthority(Role.ADMIN.getRole())
+                                .requestMatchers(HttpMethod.POST, "/api/v1/user/change/password").hasAuthority(Role.CLIENT.getRole()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
