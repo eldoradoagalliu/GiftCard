@@ -1,6 +1,6 @@
 package com.giftcard.controller;
 
-import com.giftcard.dto.ResponseDTO;
+import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.model.User;
 import com.giftcard.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
+import static com.giftcard.constant.ApplicationConstants.API_VERSION_PATH;
+import static com.giftcard.constant.ApplicationConstants.OLD_PASSWORD_MATCHES_CODE;
+import static com.giftcard.constant.ApplicationConstants.PASSWORD_CHANGED_SUCCESSFULLY_CODE;
+
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping(API_VERSION_PATH + "/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -58,11 +62,18 @@ public class UserController {
         }
     }
 
-    //TODO: Who will handle the change, client or/and admin ?
-    @PostMapping
-    public ResponseEntity<Byte> changePassword(Principal principal, @RequestParam String password) {
+    @PostMapping("/change/password")
+    public ResponseEntity<ResponseDTO> changePassword(Principal principal, @RequestParam String password) {
         try {
-            return ResponseEntity.ok(userService.changePassword(principal.getName(), password));
+            ResponseDTO response = userService.changePassword(principal.getName(), password);
+            if (response.getCode() == OLD_PASSWORD_MATCHES_CODE) {
+                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+            } else if (response.getCode() == PASSWORD_CHANGED_SUCCESSFULLY_CODE) {
+                return ResponseEntity.ok(response);
+            } else {
+                logger.error("Error during user password change -> {}", response.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             logger.error("Error during user password change -> {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
