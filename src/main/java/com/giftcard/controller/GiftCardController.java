@@ -1,6 +1,6 @@
 package com.giftcard.controller;
 
-import com.giftcard.dto.ResponseDTO;
+import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.model.GiftCard;
 import com.giftcard.service.GiftCardService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.giftcard.constant.ApplicationConstants.API_VERSION_PATH;
+
 @RestController
-@RequestMapping("/api/v1/gift-cards")
+@RequestMapping(API_VERSION_PATH + "/gift-card")
 @RequiredArgsConstructor
 public class GiftCardController {
 
