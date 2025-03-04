@@ -9,6 +9,10 @@ public class CardIdGenerator {
 
     private static final Random random = new Random();
 
+    /**
+     * Generates a card id with 10 random characters.
+     * @return random card id
+     */
     public static String generateRandomCode() {
         StringBuilder code = new StringBuilder(CARD_ID_LENGTH);
         for (int i = 0; i < CARD_ID_LENGTH; i++) {
