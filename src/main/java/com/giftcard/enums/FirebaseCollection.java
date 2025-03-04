@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum FirebaseCollectionsEnum {
+public enum FirebaseCollection {
+
     USERS("users"),
     CARDS("gift-cards");
 
