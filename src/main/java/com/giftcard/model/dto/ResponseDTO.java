@@ -1,4 +1,4 @@
-package com.giftcard.dto;
+package com.giftcard.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

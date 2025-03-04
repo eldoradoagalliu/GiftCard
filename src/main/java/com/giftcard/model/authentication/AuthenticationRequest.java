@@ -1,4 +1,4 @@
-package com.giftcard.model;
+package com.giftcard.model.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthRequest {
+public class AuthenticationRequest {
     private String email;
     private String password;
 }
