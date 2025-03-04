@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ExecutionException;
 
-import static com.giftcard.enums.FirebaseCollectionsEnum.CARDS;
+import static com.giftcard.enums.FirebaseCollection.CARDS;
 
 @Repository
 public class GiftCardRepositoryImpl implements GiftCardRepository {

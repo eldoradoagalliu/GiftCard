@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static com.giftcard.enums.FirebaseCollectionsEnum.USERS;
+import static com.giftcard.constant.ApplicationConstants.PASSWORD;
+import static com.giftcard.constant.ApplicationConstants.USER_DOES_NOT_EXIST;
+import static com.giftcard.enums.FirebaseCollection.USERS;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -56,15 +58,15 @@ public class UserRepositoryImpl implements UserRepository {
         DocumentReference documentReference = dbFirestore.collection(USERS.getName()).document(documentId);
         DocumentSnapshot document = documentReference.get().get();
         if (document.exists()) {
-            return Objects.requireNonNull(document.get("password")).toString();
+            return Objects.requireNonNull(document.get(PASSWORD)).toString();
         } else {
-            return "The user does not exist";
+            return USER_DOES_NOT_EXIST;
         }
     }
 
     @Override
     public void updatePassword(String documentId, String newPassword) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        dbFirestore.collection(USERS.getName()).document(documentId).update("password", newPassword);
+        dbFirestore.collection(USERS.getName()).document(documentId).update(PASSWORD, newPassword);
     }
 }
