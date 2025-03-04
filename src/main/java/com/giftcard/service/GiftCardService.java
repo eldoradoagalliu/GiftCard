@@ -1,6 +1,6 @@
 package com.giftcard.service;
 
-import com.giftcard.dto.ResponseDTO;
+import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.model.GiftCard;
 import com.giftcard.repository.GiftCardRepository;
 import com.giftcard.util.CardIdGenerator;

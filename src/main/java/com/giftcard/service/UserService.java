@@ -1,7 +1,7 @@
 package com.giftcard.service;
 
-import com.giftcard.dto.ResponseDTO;
-import com.giftcard.dto.UserInfoDTO;
+import com.giftcard.model.dto.ResponseDTO;
+import com.giftcard.model.dto.UserInfoDTO;
 import com.giftcard.model.User;
 import com.giftcard.repository.UserRepository;
 import com.giftcard.util.DateUtils;
@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
+
+import static com.giftcard.constant.ApplicationConstants.OLD_PASSWORD_MATCHES;
+import static com.giftcard.constant.ApplicationConstants.OLD_PASSWORD_MATCHES_CODE;
+import static com.giftcard.constant.ApplicationConstants.PASSWORD_CHANGED_SUCCESSFULLY;
+import static com.giftcard.constant.ApplicationConstants.PASSWORD_CHANGED_SUCCESSFULLY_CODE;
 
 @Service
 @RequiredArgsConstructor
@@ -56,15 +61,21 @@ public class UserService {
         return ResponseDTO.builder().message("Successfully deleted a user!").build();
     }
 
-    public Byte changePassword(String userEmail, String password) throws ExecutionException, InterruptedException {
+    public ResponseDTO changePassword(String userEmail, String password) throws ExecutionException, InterruptedException {
         String currentUserPassword = userRepository.getUserPassword(userEmail);
         String encodedNewPassword = passwordEncoder.encode(password);
 
         if (passwordEncoder.matches(password, currentUserPassword)) {
-            return 0;
-        } else {
-            userRepository.updatePassword(userEmail, encodedNewPassword);
-            return 1;
+            return ResponseDTO.builder()
+                    .code(OLD_PASSWORD_MATCHES_CODE)
+                    .message(OLD_PASSWORD_MATCHES)
+                    .build();
         }
+
+        userRepository.updatePassword(userEmail, encodedNewPassword);
+        return ResponseDTO.builder()
+                .code(PASSWORD_CHANGED_SUCCESSFULLY_CODE)
+                .message(PASSWORD_CHANGED_SUCCESSFULLY)
+                .build();
     }
 }
