@@ -1,8 +1,8 @@
 package com.giftcard.controller;
 
-import com.giftcard.dto.ResponseDTO;
-import com.giftcard.model.AuthRequest;
-import com.giftcard.model.AuthResponse;
+import com.giftcard.model.dto.ResponseDTO;
+import com.giftcard.model.authentication.AuthenticationRequest;
+import com.giftcard.model.authentication.AuthenticationResponse;
 import com.giftcard.model.RegisterRequest;
 import com.giftcard.service.AuthenticationService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.giftcard.constant.ApplicationConstants.API_VERSION_PATH;
+import static com.giftcard.constant.ApplicationConstants.USER_CREATED_CODE;
+import static com.giftcard.constant.ApplicationConstants.USER_EXISTS_CODE;
+
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping(API_VERSION_PATH)
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -33,11 +37,12 @@ public class AuthenticationController {
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequest request) {
         try {
             ResponseDTO response = authenticationService.register(request);
-            if (response.getCode() == 1) {
+            if (response.getCode() == USER_EXISTS_CODE) {
                 return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-            } else if (response.getCode() == 2) {
+            } else if (response.getCode() == USER_CREATED_CODE) {
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             } else {
+                logger.error("Error registering user -> {}", response.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -47,7 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         try {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (Exception e) {
