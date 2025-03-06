@@ -1,23 +1,18 @@
 package com.giftcard.controller;
 
-import com.giftcard.model.dto.ResponseDTO;
+import com.giftcard.model.RegisterRequest;
 import com.giftcard.model.authentication.AuthenticationRequest;
 import com.giftcard.model.authentication.AuthenticationResponse;
-import com.giftcard.model.RegisterRequest;
+import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.service.AuthenticationService;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.giftcard.constant.ApplicationConstants.API_VERSION_PATH;
@@ -62,23 +57,6 @@ public class AuthenticationController {
                     .message(INVALID_CREDENTIALS)
                     .build();
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * Creates a custom jwt auth token
-     *
-     * @param username the user's email
-     * @return a custom token
-     */
-    @PreAuthorize("hasRole='ADMIN'")
-    @GetMapping("/custom/token")
-    public ResponseEntity<String> createCustomToken(@RequestParam String username) {
-        try {
-            return ResponseEntity.ok(FirebaseAuth.getInstance().createCustomToken(username));
-        } catch (FirebaseAuthException e) {
-            logger.error("Error creating custom token -> {}", e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -69,7 +69,6 @@ public class AuthenticationService implements AuthenticationProvider {
                     .location(request.getLocation())
                     .createdAt(DateUtils.getLocalDateTime(LocalDateTime.now()))
                     .build();
-
             userRepository.createUser(user);
 
             return ResponseDTO.builder()
@@ -85,6 +84,7 @@ public class AuthenticationService implements AuthenticationProvider {
             try {
                 var user = userRepository.getUser(request.getEmail());
                 var jwt = jwtUtil.generateToken(user);
+
                 return AuthenticationResponse.builder()
                         .role(user.getRole())
                         .token(jwt)
