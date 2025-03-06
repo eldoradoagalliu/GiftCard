@@ -6,6 +6,7 @@ import com.giftcard.repository.GiftCardRepository;
 import com.giftcard.util.CardIdGenerator;
 import com.giftcard.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,8 +16,10 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class GiftCardService {
 
+    @Value("${card.month.validity}")
+    private long monthValidity;
+
     private final GiftCardRepository giftCardRepository;
-    private final EmailService emailService;
 
     public GiftCard getCard(String documentId) throws ExecutionException, InterruptedException {
         return giftCardRepository.getCard(documentId);
@@ -30,15 +33,13 @@ public class GiftCardService {
                     .value(card.getValue())
                     .isValid(Boolean.TRUE)
                     .createdAt(DateUtils.getLocalDateTime(LocalDateTime.now()))
-                    //TODO: Check the validation time
-                    .validUntil(DateUtils.getLocalDateTime(LocalDateTime.now().plusMonths(6)))
+                    .validUntil(DateUtils.getLocalDateTime(LocalDateTime.now().plusMonths(monthValidity)))
                     .build();
             giftCardRepository.createCard(newCard);
-            emailService.sendEmail("eldoradoagalliu1@gmail.com", "Gift card created successfully!",
-                    "Hello user, \nYour gift card with card id: "+ newCard.getCardId() +
-                            " has been created successfully!\nThank you for choosing our coupon service!"
-            );
-            return ResponseDTO.builder().message("Successfully created a gift card!").build();
+            return ResponseDTO.builder()
+                    .message("Successfully created a gift card!")
+                    .cardId(newCard.getCardId())
+                    .build();
         } catch (Exception e) {
             return ResponseDTO.builder().message("Error during gift card creation! Cause of error: " + e.getMessage()).build();
         }
