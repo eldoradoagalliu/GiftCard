@@ -21,11 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 
-import static com.giftcard.constant.ApplicationConstants.INVALID_CREDENTIALS;
-import static com.giftcard.constant.ApplicationConstants.SUCCESSFUL_REGISTRATION;
-import static com.giftcard.constant.ApplicationConstants.USER_ALREADY_EXISTS;
-import static com.giftcard.constant.ApplicationConstants.USER_CREATED_CODE;
-import static com.giftcard.constant.ApplicationConstants.USER_EXISTS_CODE;
+import static com.giftcard.constant.ApplicationConstants.*;
 import static com.giftcard.enums.Role.CLIENT;
 
 @Service
@@ -92,6 +88,7 @@ public class AuthenticationService implements AuthenticationProvider {
                 return AuthenticationResponse.builder()
                         .role(user.getRole())
                         .token(jwt)
+                        .message(SUCCESSFUL_AUTHENTICATION)
                         .build();
             } catch (Exception e) {
                 throw new UsernameNotFoundException(e.getMessage());

@@ -13,6 +13,7 @@ public class ApplicationConstants {
     public static final String USER_ALREADY_EXISTS = "User already exists. Try using a new email!";
     public static final String USER_DOES_NOT_EXIST = "The user does not exist";
     public static final String SUCCESSFUL_REGISTRATION = "Successfully registered a user!";
+    public static final String SUCCESSFUL_AUTHENTICATION = "User authenticated successfully!";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully!";
     public static final String OLD_PASSWORD_MATCHES = "The old password matches the new password!";

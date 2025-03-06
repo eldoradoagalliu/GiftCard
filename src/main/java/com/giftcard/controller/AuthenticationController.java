@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.giftcard.constant.ApplicationConstants.API_VERSION_PATH;
+import static com.giftcard.constant.ApplicationConstants.INVALID_CREDENTIALS;
 import static com.giftcard.constant.ApplicationConstants.USER_CREATED_CODE;
 import static com.giftcard.constant.ApplicationConstants.USER_EXISTS_CODE;
 
@@ -57,7 +58,10 @@ public class AuthenticationController {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (Exception e) {
             logger.error("Error authenticating user -> {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            AuthenticationResponse response = AuthenticationResponse.builder()
+                    .message(INVALID_CREDENTIALS)
+                    .build();
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
