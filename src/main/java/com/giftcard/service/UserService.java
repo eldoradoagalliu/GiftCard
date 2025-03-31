@@ -31,7 +31,8 @@ public class UserService {
     public UserInfoDTO getUserInfo(String documentId) throws ExecutionException, InterruptedException {
         var user = getUser(documentId);
         return UserInfoDTO.builder()
-                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
                 .role(user.getRole())
                 .build();
     }
