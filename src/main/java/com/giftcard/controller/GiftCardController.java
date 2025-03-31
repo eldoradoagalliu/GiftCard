@@ -1,8 +1,11 @@
 package com.giftcard.controller;
 
-import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.model.GiftCard;
+import com.giftcard.model.dto.CardResponseDTO;
+import com.giftcard.model.dto.UserInfoDTO;
+import com.giftcard.service.EmailService;
 import com.giftcard.service.GiftCardService;
+import com.giftcard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,9 @@ public class GiftCardController {
 
     private static final Logger logger = LoggerFactory.getLogger(GiftCardController.class);
 
+    private final UserService userService;
     private final GiftCardService giftCardService;
+    private final EmailService emailService;
 
     @GetMapping
     public ResponseEntity<GiftCard> getGiftCard(@RequestParam String cardId) {
@@ -39,9 +44,12 @@ public class GiftCardController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO> createGiftCard(@RequestBody GiftCard card) {
+    public ResponseEntity<CardResponseDTO> createGiftCard(@RequestBody GiftCard card) {
         try {
-            return new ResponseEntity<>(giftCardService.createCard(card), HttpStatus.CREATED);
+            UserInfoDTO userInfo = userService.retrieveLoggedInUserInfo();
+            CardResponseDTO response = giftCardService.createCard(card);
+            emailService.sendGiftCardEmail(userInfo, response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             logger.error("Error creating gift card -> {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -49,7 +57,7 @@ public class GiftCardController {
     }
 
     @PutMapping
-    public ResponseEntity<ResponseDTO> updateGiftCard(@RequestBody GiftCard card) {
+    public ResponseEntity<CardResponseDTO> updateGiftCard(@RequestBody GiftCard card) {
         try {
             return ResponseEntity.ok(giftCardService.updateCard(card));
         } catch (Exception e) {
@@ -59,12 +67,25 @@ public class GiftCardController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ResponseDTO> deleteGiftCard(@RequestParam String cardId) {
+    public ResponseEntity<CardResponseDTO> deleteGiftCard(@RequestParam String cardId) {
         try {
             return new ResponseEntity<>(giftCardService.deleteCard(cardId), HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             logger.error("Error deleting gift card -> {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<CardResponseDTO> validateGiftCard(@RequestParam String cardId) {
+        try {
+            UserInfoDTO userInfo = userService.retrieveLoggedInUserInfo();
+            CardResponseDTO response = giftCardService.getCardInformation(cardId);
+            emailService.sendCardValidationEmail(userInfo, response);
+            return ResponseEntity.status(HttpStatus.FOUND).body(response);
+        } catch (Exception e) {
+            logger.error("Error validating gift card -> {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

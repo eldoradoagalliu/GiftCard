@@ -1,7 +1,7 @@
 package com.giftcard.service;
 
-import com.giftcard.model.dto.ResponseDTO;
 import com.giftcard.model.GiftCard;
+import com.giftcard.model.dto.CardResponseDTO;
 import com.giftcard.repository.GiftCardRepository;
 import com.giftcard.util.CardIdGenerator;
 import com.giftcard.util.DateUtils;
@@ -25,44 +25,50 @@ public class GiftCardService {
         return giftCardRepository.getCard(documentId);
     }
 
-    public ResponseDTO createCard(GiftCard card) {
+    public CardResponseDTO getCardInformation(String documentId) throws ExecutionException, InterruptedException {
+        var card = giftCardRepository.getCard(documentId);
+        return CardResponseDTO.builder()
+                .cardId(card.getCardId())
+                .message("Successfully retrieved gift card information!")
+                .validUntil(card.getValidUntil())
+                .build();
+    }
+
+    public CardResponseDTO createCard(GiftCard card) {
         try {
             var newCard = GiftCard.builder()
                     .cardId(generateCardId())
                     .company(card.getCompany())
                     .value(card.getValue())
-                    .isValid(Boolean.TRUE)
+                    .isValid(true)
                     .createdAt(DateUtils.getLocalDateTime(LocalDateTime.now()))
                     .validUntil(DateUtils.getLocalDateTime(LocalDateTime.now().plusMonths(monthValidity)))
                     .build();
             giftCardRepository.createCard(newCard);
-            return ResponseDTO.builder()
-                    .message("Successfully created a gift card!")
+
+            return CardResponseDTO.builder()
                     .cardId(newCard.getCardId())
+                    .value(newCard.getValue())
+                    .message("Successfully created a gift card!")
+                    .validUntil(newCard.getValidUntil())
                     .build();
         } catch (Exception e) {
-            return ResponseDTO.builder().message("Error during gift card creation! Cause of error: " + e.getMessage()).build();
+            return CardResponseDTO.builder().message("Error during gift card creation! Cause of error: " + e.getMessage()).build();
         }
     }
 
-    /**
-     * General update of all the user fields
-     */
-    public ResponseDTO updateCard(GiftCard card) {
+    public CardResponseDTO updateCard(GiftCard card) {
         giftCardRepository.updateCard(card);
-        return ResponseDTO.builder().message("Successfully updated a gift card!").build();
+        return CardResponseDTO.builder().message("Successfully updated a gift card!").build();
     }
 
-    public ResponseDTO deleteCard(String documentId) {
+    public CardResponseDTO deleteCard(String documentId) {
         giftCardRepository.deleteCard(documentId);
-        return ResponseDTO.builder().message("Successfully deleted a gift card!").build();
+        return CardResponseDTO.builder().message("Successfully deleted a gift card!").build();
     }
 
     private String generateCardId() throws ExecutionException, InterruptedException {
         String cardId = CardIdGenerator.generateRandomCode();
-        if (giftCardRepository.cardExists(cardId)) {
-            return generateCardId();
-        }
-        return cardId;
+        return giftCardRepository.cardExists(cardId) ? generateCardId() : cardId;
     }
 }

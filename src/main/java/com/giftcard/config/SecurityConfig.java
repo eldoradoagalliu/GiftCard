@@ -32,7 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/v1/gift-card").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/gift-card").permitAll()
                                 .requestMatchers("/api/v1/register", "/api/v1/user", "/api/v1/gift-card").hasAuthority(Role.ADMIN.getRole())
-                                .requestMatchers(HttpMethod.POST, "/api/v1/user/change/password").hasAuthority(Role.CLIENT.getRole()))
+                                .requestMatchers(HttpMethod.POST, "/api/v1/user/change/password", "/api/v1/gift-card/validate").hasAuthority(Role.CLIENT.getRole()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

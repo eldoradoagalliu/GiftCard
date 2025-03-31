@@ -6,6 +6,8 @@ import com.giftcard.model.User;
 import com.giftcard.repository.UserRepository;
 import com.giftcard.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +39,11 @@ public class UserService {
                 .build();
     }
 
-    /**
-     * General update of all the user fields
-     */
+    public UserInfoDTO retrieveLoggedInUserInfo() throws ExecutionException, InterruptedException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return getUserInfo(authentication.getName());
+    }
+
     public ResponseDTO updateUser(User user) {
         var editedUser = User.builder()
                 .fullName(user.getFullName())

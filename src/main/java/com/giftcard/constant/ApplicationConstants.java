@@ -28,4 +28,10 @@ public class ApplicationConstants {
     // Card properties
     public static final String ID_CHARACTERS = "0123456789ABCDEF";
     public static final byte CARD_ID_LENGTH = 10;
+
+    public static final String GIFT_CARD_EMAIL_TEMPLATE = "create-card-email";
+    public static final String GIFT_CARD_EMAIL_SUBJECT = "Gift card information";
+
+    public static final String VALIDATE_CARD_EMAIL_TEMPLATE = "validate-card-email";
+    public static final String VALIDATE_CARD_EMAIL_SUBJECT = "Gift card validation";
 }

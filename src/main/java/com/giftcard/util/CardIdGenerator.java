@@ -11,6 +11,7 @@ public class CardIdGenerator {
 
     /**
      * Generates a card id with 10 random characters.
+     *
      * @return random card id
      */
     public static String generateRandomCode() {
